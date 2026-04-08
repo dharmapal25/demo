@@ -48,6 +48,13 @@ export default function CreateRoomPage() {
 
   return (
     <div className="create-room-page">
+      <button 
+        onClick={() => navigate('/rooms')} 
+        className="back-button"
+        title="Back to Rooms"
+      >
+        ← Back to Rooms
+      </button>
       <div className="create-room-container">
         <h2>Create a New Chat Room</h2>
 

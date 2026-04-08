@@ -17,6 +17,31 @@
   border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
+.rooms-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.home-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
 .rooms-header h1 {
   color: white;
   font-size: 2.5rem;
@@ -79,6 +104,12 @@
   flex: 1;
 }
 
+.room-card-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .room-members {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -86,6 +117,16 @@
   border-radius: 20px;
   font-size: 0.85rem;
   white-space: nowrap;
+}
+
+.pending-requests-badge {
+  background: #ff6b6b;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  font-weight: 600;
 }
 
 .room-description {

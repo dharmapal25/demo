@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAllRooms, joinRoom } from '../services/roomService';
+import requestService from '../services/requestService';
 import './RoomsPage.css';
 
 export default function RoomsListPage() {
@@ -14,6 +15,7 @@ export default function RoomsListPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [requestStates, setRequestStates] = useState({}); // Track request status per room
+  const [pendingRequestsCounts, setPendingRequestsCounts] = useState({}); // Track pending count per room
   const [successMessage, setSuccessMessage] = useState('');
 
   // Fetch rooms
@@ -25,6 +27,20 @@ export default function RoomsListPage() {
         const data = await getAllRooms(page, 10, search);
         setRooms(data.rooms);
         setTotalPages(data.pagination.pages);
+
+        // Fetch pending requests for rooms where user is admin
+        const countsMap = {};
+        for (const room of data.rooms) {
+          if (room.owner._id === user?._id) {
+            try {
+              const reqData = await requestService.getPendingRequests(room._id);
+              countsMap[room._id] = (reqData.requests || []).length;
+            } catch (err) {
+              console.error(`Error fetching requests for room ${room._id}:`, err);
+            }
+          }
+        }
+        setPendingRequestsCounts(countsMap);
       } catch (err) {
         setError(err.message || 'Failed to load rooms');
         console.error('Error fetching rooms:', err);
@@ -34,7 +50,7 @@ export default function RoomsListPage() {
     };
 
     fetchRooms();
-  }, [page, search]);
+  }, [page, search, user?._id]);
 
   // Handle join room
   const handleJoinRoom = async (roomId) => {
@@ -52,7 +68,16 @@ export default function RoomsListPage() {
   return (
     <div className="rooms-page">
       <div className="rooms-header">
-        <h1>Chat Rooms</h1>
+        <div className="rooms-header-left">
+          <button 
+            onClick={() => navigate('/')} 
+            className="home-button"
+            title="Go to Home"
+          >
+            🏠
+          </button>
+          <h1>Chat Rooms</h1>
+        </div>
         <button
           className="button-primary"
           onClick={() => navigate('/create-room')}
@@ -99,7 +124,12 @@ export default function RoomsListPage() {
               <div key={room._id} className="room-card">
                 <div className="room-card-header">
                   <h3>{room.name}</h3>
-                  <span className="room-members">{room.members.length}/{room.maxMembers}</span>
+                  <div className="room-card-badges">
+                    <span className="room-members">{room.members.length}/{room.maxMembers}</span>
+                    {room.owner._id === user?._id && pendingRequestsCounts[room._id] > 0 && (
+                      <span className="pending-requests-badge">{pendingRequestsCounts[room._id]} requests</span>
+                    )}
+                  </div>
                 </div>
 
                 <p className="room-description">{room.description || 'No description'}</p>
@@ -123,7 +153,11 @@ export default function RoomsListPage() {
                   )}
                 </div>
 
-                {room.members.some((m) => m._id === user?._id) ? (
+                {room.members.some((m) => {
+                  // Handle both object with _id and string ID
+                  const memberId = typeof m === 'string' ? m : m._id;
+                  return memberId === user?._id;
+                }) ? (
                   <button
                     className="button-secondary"
                     onClick={() => navigate(`/chat/${room._id}`)}

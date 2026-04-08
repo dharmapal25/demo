@@ -104,14 +104,27 @@ const joinRoom = async (req, res) => {
     const { roomId } = req.params;
     const userId = req.user.id;
 
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
     const room = await Room.findById(roomId);
 
     if (!room) {
       return res.status(404).json({ message: 'Room not found' });
     }
 
-    // Check if user is already a member
-    if (room.members.includes(userId)) {
+    // Check if room is full
+    if (room.members.length >= room.maxMembers) {
+      return res.status(400).json({ message: 'Room is full. No more members can join.' });
+    }
+
+    // Check if user is already a member (handle both string and ObjectId)
+    const isMember = room.members.some(
+      (member) => member.toString() === userId.toString()
+    );
+
+    if (isMember) {
       return res.status(400).json({ message: 'You are already a member of this room' });
     }
 
@@ -137,29 +150,34 @@ const joinRoom = async (req, res) => {
 
     await joinRequest.save();
 
+    // Emit Socket.IO notification to room admin BEFORE response
+    const io = req.app.get('io');
+    if (io) {
+      try {
+        io.to(`user_${room.owner}`).emit('newJoinRequest', {
+          requestId: joinRequest._id,
+          roomId: room._id,
+          roomName: room.name,
+          userId: joinRequest.userId,
+          username: joinRequest.username,
+          email: joinRequest.email,
+          message: `${joinRequest.username} has requested to join "${room.name}"`,
+        });
+      } catch (socketError) {
+        console.error('Socket.IO error:', socketError);
+      }
+    }
+
     res.status(201).json({
       message: 'Join request sent to room admin',
       request: joinRequest,
     });
-
-    // Emit Socket.IO notification to room admin
-    const io = req.app.get('io');
-    if (io) {
-      io.to(`user_${room.createdBy}`).emit('newJoinRequest', {
-        requestId: joinRequest._id,
-        roomId: room._id,
-        roomName: room.name,
-        userId: joinRequest.userId,
-        username: joinRequest.username,
-        email: joinRequest.email,
-        message: `${joinRequest.username} has requested to join "${room.name}"`,
-      });
-    }
   } catch (error) {
     console.error('Join room error:', error);
     res.status(500).json({ message: 'Failed to join room', error: error.message });
   }
 };
+
 
 // Leave room
 const leaveRoom = async (req, res) => {
@@ -288,6 +306,13 @@ const approveRequest = async (req, res) => {
       return res.status(403).json({ message: 'Only room admin can approve requests' });
     }
 
+    // Check if room is full
+    if (room.members.length >= room.maxMembers) {
+      // Delete the request
+      await JoinRequest.findByIdAndDelete(requestId);
+      return res.status(400).json({ message: 'Room is full. Cannot approve this request.' });
+    }
+
     // Add user to room members
     if (!room.members.includes(joinRequest.userId)) {
       room.members.push(joinRequest.userId);
@@ -337,7 +362,7 @@ const rejectRequest = async (req, res) => {
       return res.status(404).json({ message: 'Room not found' });
     }
 
-    if (room.createdBy.toString() !== adminId) {
+    if (room.owner.toString() !== adminId) {
       return res.status(403).json({ message: 'Only room admin can reject requests' });
     }
 
@@ -378,7 +403,7 @@ const getPendingRequests = async (req, res) => {
       return res.status(404).json({ message: 'Room not found' });
     }
 
-    if (room.createdBy.toString() !== adminId) {
+    if (room.owner.toString() !== adminId) {
       return res.status(403).json({ message: 'Only room admin can view requests' });
     }
 

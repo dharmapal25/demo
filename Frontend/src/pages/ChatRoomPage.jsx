@@ -174,9 +174,18 @@ export default function ChatRoomPage() {
     <div className="chat-room-page">
       {/* Header */}
       <header className="chat-header">
-        <div className="chat-info">
-          <h2>{room?.name}</h2>
-          <span className="room-members-count">{room?.members.length} members</span>
+        <div className="chat-header-left">
+          <button 
+            onClick={() => navigate('/rooms')} 
+            className="button-back"
+            title="Back to Rooms"
+          >
+            ← Back
+          </button>
+          <div className="chat-info">
+            <h2>{room?.name}</h2>
+            <span className="room-members-count">{room?.members.length} members</span>
+          </div>
         </div>
         <button onClick={handleLeaveRoom} className="button-leave">
           Leave Room
@@ -184,7 +193,7 @@ export default function ChatRoomPage() {
       </header>
 
       {/* Join Request Notifications (for room admin) */}
-      {room && user._id === room.createdBy && (
+      {room && user._id === room.owner._id && (
         <RequestNotifications roomId={roomId} isAdmin={true} />
       )}
 

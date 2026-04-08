@@ -2,10 +2,14 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User.model');
 
 // Generate Access Token (short-lived, in memory)
-const generateAccessToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRATION || '15m',
-  });
+const generateAccessToken = (user) => {
+  return jwt.sign(
+    { id: user._id, username: user.username, email: user.email },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRATION || '15m',
+    }
+  );
 };
 
 // Generate Refresh Token (long-lived, in cookies)
@@ -57,7 +61,7 @@ exports.register = async (req, res) => {
     });
 
     // Generate tokens
-    const accessToken = generateAccessToken(user._id);
+    const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user._id);
 
     // Set refresh token in secure httpOnly cookie
@@ -122,7 +126,7 @@ exports.login = async (req, res) => {
     }
 
     // Generate tokens
-    const accessToken = generateAccessToken(user._id);
+    const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user._id);
 
     // Set refresh token in secure httpOnly cookie
@@ -138,6 +142,7 @@ exports.login = async (req, res) => {
       message: 'User logged in successfully',
       accessToken,
       user: {
+        _id: user._id,
         id: user._id,
         username: user.username,
         email: user.email,
@@ -207,8 +212,17 @@ exports.refreshToken = async (req, res) => {
         process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET
       );
 
+      // Fetch user data
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'User not found',
+        });
+      }
+
       // Generate new access token
-      const accessToken = generateAccessToken(decoded.id);
+      const accessToken = generateAccessToken(user);
 
       res.status(200).json({
         success: true,

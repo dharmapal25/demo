@@ -22,7 +22,8 @@ export const loginUser = async (credentials) => {
     }
     return response.data;
   } catch (error) {
-    throw error.response?.data || { message: 'Login failed' };
+    const message = error.response?.data?.message || 'Login failed';
+    throw new Error(message);
   }
 };
 
@@ -32,7 +33,8 @@ export const getCurrentUser = async () => {
     const response = await API.get('/auth/me');
     return response.data.user;
   } catch (error) {
-    throw error.response?.data || { message: 'Failed to fetch user' };
+    const message = error.response?.data?.message || 'Failed to fetch user';
+    throw new Error(message);
   }
 };
 
