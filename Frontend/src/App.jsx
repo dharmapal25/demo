@@ -1,9 +1,28 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import PrivateRoute from './components/PrivateRoute';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { PrivateRoute } from './components/PrivateRoute';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
 import './App.css';
+
+function HomePage() {
+  const { user, logout } = useAuth();
+
+  return (
+    <div className="home-shell">
+      <header className="home-header">
+        <div>
+          <span className="tagline">Welcome back</span>
+          <h1>Hello {user?.username || 'User'}</h1>
+          <p>Your dashboard is ready</p>
+        </div>
+        <button className="button-secondary" onClick={logout}>
+          Logout
+        </button>
+      </header>
+    </div>
+  );
+}
 
 function App() {
   return (
@@ -16,12 +35,7 @@ function App() {
             path="/"
             element={
               <PrivateRoute>
-                <div className="home-container">
-                  <div className="home-content">
-                    <h1>Welcome to Your App!</h1>
-                    <p>You are authenticated and can access protected content.</p>
-                  </div>
-                </div>
+                <HomePage />
               </PrivateRoute>
             }
           />
@@ -32,3 +46,5 @@ function App() {
 }
 
 export default App;
+
+
