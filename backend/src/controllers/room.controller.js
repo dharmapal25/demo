@@ -1,6 +1,4 @@
-const Room = require('../models/Room.model');
-const Message = require('../models/Message.model');
-const JoinRequest = require('../models/JoinRequest.model');
+const { cacheRoomMessages, getCachedRoomMessages, invalidateRoomMessagesCache } = require('../services/redis.service');
 
 // Create a new room
 const createRoom = async (req, res) => {
@@ -26,6 +24,9 @@ const createRoom = async (req, res) => {
     await room.save();
     await room.populate('owner', 'username email');
     await room.populate('members', 'username');
+    
+    // Invalidate rooms list cache
+    await deleteCachePattern('rooms:list:*');
 
     res.status(201).json({
       message: 'Room created successfully',
@@ -42,6 +43,15 @@ const getAllRooms = async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
     const skip = (page - 1) * limit;
+    
+    // Create cache key
+    const cacheKey = `rooms:list:${search || 'all'}:${page}:${limit}`;
+    
+    // Check cache first
+    const cachedRooms = await getCache(cacheKey);
+    if (cachedRooms) {
+      return res.json(cachedRooms);
+    }
 
     let query = {};
 
@@ -59,7 +69,7 @@ const getAllRooms = async (req, res) => {
 
     const total = await Room.countDocuments(query);
 
-    res.json({
+    const response = {
       message: 'Rooms retrieved successfully',
       rooms,
       pagination: {
@@ -68,7 +78,12 @@ const getAllRooms = async (req, res) => {
         limit: Number(limit),
         pages: Math.ceil(total / limit),
       },
-    });
+    };
+    
+    // Cache the response
+    await setCache(cacheKey, response, CACHE_TTL.ROOMS_LIST);
+
+    res.json(response);
   } catch (error) {
     console.error('Get rooms error:', error);
     res.status(500).json({ message: 'Failed to retrieve rooms', error: error.message });
@@ -79,6 +94,12 @@ const getAllRooms = async (req, res) => {
 const getRoom = async (req, res) => {
   try {
     const { roomId } = req.params;
+    
+    // Check cache first
+    const cachedRoom = await getCache(`room:${roomId}`);
+    if (cachedRoom) {
+      return res.json(cachedRoom);
+    }
 
     const room = await Room.findById(roomId)
       .populate('owner', 'username email')
@@ -88,10 +109,15 @@ const getRoom = async (req, res) => {
       return res.status(404).json({ message: 'Room not found' });
     }
 
-    res.json({
+    const response = {
       message: 'Room retrieved successfully',
       room,
-    });
+    };
+    
+    // Cache the response
+    await setCache(`room:${roomId}`, response, CACHE_TTL.ROOM);
+
+    res.json(response);
   } catch (error) {
     console.error('Get room error:', error);
     res.status(500).json({ message: 'Failed to retrieve room', error: error.message });
@@ -252,6 +278,15 @@ const getRoomMessages = async (req, res) => {
   try {
     const { roomId } = req.params;
     const { page = 1, limit = 50 } = req.query;
+    
+    // Check cache first (only for first page to ensure realtime updates)
+    if (page === 1) {
+      const cachedMessages = await getCachedRoomMessages(roomId);
+      if (cachedMessages) {
+        return res.json(cachedMessages);
+      }
+    }
+    
     const skip = (page - 1) * limit;
 
     // Verify room exists
@@ -268,7 +303,7 @@ const getRoomMessages = async (req, res) => {
 
     const total = await Message.countDocuments({ roomId });
 
-    res.json({
+    const response = {
       message: 'Messages retrieved successfully',
       messages: messages.reverse(), // Return in chronological order
       pagination: {
@@ -277,7 +312,14 @@ const getRoomMessages = async (req, res) => {
         limit: Number(limit),
         pages: Math.ceil(total / limit),
       },
-    });
+    };
+    
+    // Cache only first page
+    if (page === 1) {
+      await cacheRoomMessages(roomId, response);
+    }
+
+    res.json(response);
   } catch (error) {
     console.error('Get messages error:', error);
     res.status(500).json({ message: 'Failed to retrieve messages', error: error.message });
@@ -317,6 +359,10 @@ const approveRequest = async (req, res) => {
     if (!room.members.includes(joinRequest.userId)) {
       room.members.push(joinRequest.userId);
       await room.save();
+      
+      // Invalidate room cache
+      await deleteCache(`room:${joinRequest.roomId}`);
+      await deleteCachePattern('rooms:list:*');
     }
 
     // Delete the request

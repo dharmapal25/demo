@@ -3,6 +3,7 @@ const connectDB = require('./src/config/db');
 const http = require('http');
 const socketIo = require('socket.io');
 const Message = require('./src/models/Message.model');
+const { invalidateRoomMessagesCache } = require('./src/services/redis.service');
 
 const PORT = process.env.PORT || 3000;
 
@@ -64,6 +65,9 @@ io.on('connection', (socket) => {
         text,
       });
       await message.save();
+      
+      // Invalidate messages cache for this room
+      await invalidateRoomMessagesCache(roomId);
 
       // Broadcast to all users in room
       io.to(roomId).emit('message-received', {

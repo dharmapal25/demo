@@ -64,7 +64,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (email, password) => {
     try {
       setError(null);
-      const response = await loginUser(email, password);
+      const response = await loginUser({ email, password });
       setUser(response.user);
       
       // Initialize Socket.IO and register user
