@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://chatroom-hub-server.onrender.com/api',
   withCredentials: true, // Enable cookies
 });
 
@@ -39,7 +39,7 @@ API.interceptors.response.use(
       try {
         // Call refresh endpoint
         const { data } = await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/refresh`,
+          `${import.meta.env.VITE_API_URL || 'https://chatroom-hub-server.onrender.com/api'}/auth/refresh`,
           {},
           { withCredentials: true }
         );

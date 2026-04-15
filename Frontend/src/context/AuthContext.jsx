@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
         // Use axios directly to avoid interceptor issues during initial auth check
         try {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/verify-session`,
+            `${import.meta.env.VITE_API_URL || 'https://chatroom-hub-server.onrender.com/api'}/auth/verify-session`,
             {},
             { withCredentials: true, timeout: 5000 }
           );

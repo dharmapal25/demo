@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-const socketURL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const socketURL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://chatroom-hub-server.onrender.com';
 let socket = null;
 
 // Initialize Socket.IO connection
