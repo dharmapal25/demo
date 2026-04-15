@@ -83,6 +83,7 @@ exports.register = async (req, res) => {
       accessToken,
       user: {
         id: user._id,
+        _id: user._id, // --> new line
         username: user.username,
         email: user.email,
       },
@@ -321,6 +322,7 @@ exports.verifySession = async (req, res) => {
         accessToken,
         user: {
           id: user._id,
+          _id: user._id,  // --> new line
           username: user.username,
           email: user.email,
         },

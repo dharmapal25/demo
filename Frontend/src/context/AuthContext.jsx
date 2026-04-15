@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
       try {
         // On page reload, access token is lost from memory, so skip that check
         // Go directly to verify session from refresh token (cookies)
-        
+
         // Use axios directly to avoid interceptor issues during initial auth check
         try {
           const response = await axios.post(
@@ -33,11 +33,16 @@ export function AuthProvider({ children }) {
             {},
             { withCredentials: true, timeout: 5000 }
           );
-          
+
           if (response.data && response.data.success && response.data.accessToken) {
             // Set the new access token in memory
             setAccessToken(response.data.accessToken);
-            setUser(response.data.user);
+
+            // setUser(response.data.user);
+            setUser({                // --> new line
+              ...response.data.user,
+              _id: response.data.user._id || response.data.user.id,
+            });
             console.log('✅ Session restored from refresh token');
             setLoading(false);
             return;
@@ -52,7 +57,7 @@ export function AuthProvider({ children }) {
             console.debug('Session verification error:', err.message);
           }
         }
-        
+
         // If we reach here, user is not authenticated
         clearAccessToken();
       } catch (err) {
@@ -76,7 +81,7 @@ export function AuthProvider({ children }) {
         password,
         passwordConfirm,
       });
-      
+
       // Initialize Socket.IO and register user after successful registration
       setTimeout(() => {
         const socket = initializeSocket();
@@ -84,7 +89,7 @@ export function AuthProvider({ children }) {
           socket.emit('register-user', { userId: response.user.id || response.user._id });
         }
       }, 500);
-      
+
       setUser(response.user);
       return response;
     } catch (err) {
@@ -100,13 +105,13 @@ export function AuthProvider({ children }) {
       setError(null);
       const response = await loginUser({ email, password });
       setUser(response.user);
-      
+
       // Initialize Socket.IO and register user
       setTimeout(() => {
         const socket = initializeSocket();
         socket.emit('register-user', { userId: response.user._id });
       }, 500);
-      
+
       return response;
     } catch (err) {
       const errorMsg = err.message || 'Login failed';
