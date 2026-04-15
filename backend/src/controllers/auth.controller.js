@@ -72,9 +72,9 @@ exports.register = async (req, res) => {
     // Set refresh token in secure httpOnly cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.status(201).json({
@@ -140,11 +140,12 @@ exports.login = async (req, res) => {
     await user.save();
 
     // Set refresh token in secure httpOnly cookie
+
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.status(200).json({
@@ -200,8 +201,8 @@ exports.logout = async (req, res) => {
     // Clear refresh token cookie
     res.clearCookie('refreshToken', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
     });
 
     res.status(200).json({
@@ -297,7 +298,7 @@ exports.verifySession = async (req, res) => {
 
       // Fetch user data and verify refresh token matches DB
       const user = await User.findById(decoded.id).select('+refreshToken');
-      
+
       if (!user) {
         return res.status(401).json({
           success: false,
