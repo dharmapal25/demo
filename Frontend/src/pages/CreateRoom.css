@@ -60,7 +60,7 @@
 }
 
 .form-group label {
-  color: #333;
+  color: var(--font-color);
   font-weight: 600;
   font-size: 0.95rem;
 }
@@ -122,7 +122,9 @@
 
 .button-primary,
 .button-secondary {
-  padding: 12px 24px;
+  /* padding: 12px 24px; */
+    width: 200px;
+  height: 50px;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -133,14 +135,14 @@
 }
 
 .button-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  /* box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); */
 }
 
 .button-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+  /* box-shadow: 0 6px 16px #667eea99; */
 }
 
 .button-primary:disabled {

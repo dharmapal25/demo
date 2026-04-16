@@ -72,7 +72,7 @@ export default function RegisterPage() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              placeholder="Choose a username"
+              placeholder="Username"
               required
               minLength="3"
               disabled={loading}

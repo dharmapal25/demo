@@ -15,15 +15,13 @@ export default function HomePage() {
       <header className="home-header">
         <div>
           <span className="tagline">Welcome back</span>
-          <h1>Hello {user?.username || 'User'}</h1>
-          <p>Your dashboard is ready</p>
+          <h2>Hello {user?.username || 'User'}</h2>
         </div>
         <div className="header-buttons">
           <button
             className="button-primary"
-            onClick={() => navigate('/rooms')}
-          >
-            Join Chat Rooms
+            onClick={() => navigate('/rooms')} >
+            Join Rooms
           </button>
           <button className="button-secondary" onClick={handleLogout}>
             Logout

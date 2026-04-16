@@ -135,7 +135,7 @@ export default function RoomsListPage() {
                 <p className="room-description">{room.description || 'No description'}</p>
 
                 <div className="room-info">
-                  <small className="room-owner">Owner: {room.owner.username}</small>
+                  <p className="room-owner">Owner: <span className='room-user' >{room.owner.username}</span> </p>
                   <small className="room-created">
                     Created: {new Date(room.createdAt).toLocaleDateString()}
                   </small>

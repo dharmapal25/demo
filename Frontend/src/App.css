@@ -14,16 +14,17 @@ body {
 /* Home Page */
 .home-shell {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+  background-color: var(--bg-color);
 }
 
 .home-header {
-  padding: 60px 40px;
+  padding: 10px 20px;
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid #ffffff33;
 }
 
 .home-header h1 {
@@ -47,31 +48,29 @@ body {
 
 .header-buttons {
   display: flex;
-  gap: 15px;
+  gap: 20px;
 }
 
 .button-primary {
-  background: white;
-  color: #667eea;
-  padding: 12px 24px;
-  border: none;
+  background: var(--Primary-color);
+  color: var(--font-color);
+
+  width: 200px;
+  height: 50px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .button-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .button-secondary {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--bg-color);
   color: white;
-  padding: 12px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid #ffffff4d;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
@@ -79,7 +78,7 @@ body {
 }
 
 .button-secondary:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #ffffff4d;
 }
 
 /* Dashboard Content */

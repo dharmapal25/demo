@@ -3,7 +3,7 @@
 .rooms-page {
   min-height: 100vh;
   padding: 40px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:var(--bg-color) ;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -14,7 +14,7 @@
   align-items: center;
   margin-bottom: 40px;
   padding-bottom: 20px;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid #ffffff33;
 }
 
 .rooms-header-left {
@@ -75,7 +75,7 @@
 }
 
 .room-card {
-  background: white;
+  background: var(--card);
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
@@ -83,10 +83,12 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
 }
 
 .room-card:hover {
-  transform: translateY(-5px);
+  /* transform: translateY(-5px); */
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
@@ -99,7 +101,7 @@
 
 .room-card-header h3 {
   margin: 0;
-  color: #333;
+  color: var(--font-color);
   font-size: 1.3rem;
   flex: 1;
 }
@@ -111,7 +113,7 @@
 }
 
 .room-members {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--border-Blue);
   color: white;
   padding: 4px 10px;
   border-radius: 20px;
@@ -131,19 +133,34 @@
 
 .room-description {
   margin: 0;
-  color: #666;
+  color: #aca2a2;
   font-size: 0.95rem;
   line-height: 1.5;
+  /* overflow: ; */
+}
+
+.room-owner {
+  font-size: 14px;
+  padding: 7px;
+  border-radius: 20px;
+  background-color: #8a8a8a65;
+}
+
+.room-owner .room-user {
+  font-size: 17px;
+  color: #25f8ff;
 }
 
 .room-info {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 15px;
   font-size: 0.85rem;
-  color: #999;
+  color: #dadada;
   padding: 10px 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+  border-top: 1px solid #a8a8a859;
+  border-bottom: 1px solid #a8a8a859;
 }
 
 .room-info small {
@@ -159,7 +176,7 @@
 
 .members-label {
   font-size: 0.85rem;
-  color: #666;
+  color: #adadad;
   font-weight: 600;
 }
 
@@ -206,7 +223,7 @@
 
 /* Button styles */
 .button-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   color: white;
   padding: 12px 24px;
   border: none;
@@ -215,12 +232,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  /* box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); */
 }
 
 .button-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+  /* box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6); */
 }
 
 .button-primary:disabled {
@@ -231,7 +248,9 @@
 .button-secondary {
   background: #f0f0f0;
   color: #333;
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
+    width: 200px;
+  height: 50px;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 0.95rem;
