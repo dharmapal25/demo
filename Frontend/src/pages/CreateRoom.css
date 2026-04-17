@@ -205,6 +205,8 @@
 
   .form-actions {
     flex-direction: column;
+            height: 100px;
+
   }
 
   .button-primary,

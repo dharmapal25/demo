@@ -115,13 +115,14 @@ export default function RoomsListPage() {
 
       {loading ? (
         <div className="loading-container">
+          <div className="spinner"></div>
           <p>Loading rooms...</p>
         </div>
       ) : rooms.length === 0 ? (
         <div className="empty-state">
           <p>No rooms found</p>
           <button
-            className="button-primary"
+            className="button-primary create-room-btn"
             onClick={() => navigate('/create-room')}
           >
             Create Room

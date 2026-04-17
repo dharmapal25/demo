@@ -151,6 +151,7 @@ export default function ChatRoomPage() {
     return (
       <div className="chat-room-page">
         <div className="loading-container">
+          <div className="spinner"></div>
           <p>Loading room...</p>
         </div>
       </div>
