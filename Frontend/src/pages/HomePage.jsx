@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
+import dashboardImage from "../../public/happy.png"
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -11,22 +12,17 @@ export default function HomePage() {
     navigate('/login');
   };
 
-
-  // <html lang="en" data-theme="">
-
   const toggleTheme = () => {
     let html = document.documentElement;
     let theme = html.getAttribute('data-theme');
     let newTheme = theme === 'light' ? 'dark' : 'light'
     html.setAttribute('data-theme', newTheme );
     localStorage.setItem("mode",theme)
-
   };
   
   let local = localStorage.getItem('mode')
   let html = document.documentElement;
   html.setAttribute('data-theme',local === "dark" ? "light" : "dark");
-  
 
 
   return (
@@ -51,61 +47,57 @@ export default function HomePage() {
       </header>
 
       <div className="dashboard-content">
-        <section className="hero-card">
-          <div className="hero-details">
-            <h2>Real-time chat with Socket.IO</h2>
-            <p>
-              Join chat rooms, connect with others, and have real-time conversations.
-              Messages are delivered instantly using WebSocket technology.
+        <section className="dashboard-hero">
+          <div className="dashboard-text">
+            <h1>Welcome to FlashChat</h1>
+            <p className="dashboard-intro">
+              Connect with people around the world in real-time. Join chat rooms, create your own, and engage in meaningful conversations powered by Socket.IO technology.
             </p>
+
+            <div className="dashboard-features">
+              <div className="feature-block">
+                <h3>⚡ Real-time Messaging</h3>
+                <p>Send and receive messages instantly with WebSocket technology</p>
+              </div>
+              <div className="feature-block">
+                <h3>🌍 Global Community</h3>
+                <p>Join rooms and connect with people from around the world</p>
+              </div>
+              <div className="feature-block">
+                <h3>🔧 Easy Management</h3>
+                <p>Create rooms, manage members, and control access easily</p>
+              </div>
+            </div>
+
+            <div className="dashboard-actions">
+              <button className="action-btn primary" onClick={() => navigate('/rooms')}>
+                Browse Rooms
+              </button>
+              <button className="action-btn secondary" onClick={() => navigate('/create-room')}>
+                Create Room
+              </button>
+            </div>
           </div>
-          <div className="hero-info">
-            <div className="hero-stat">
-              <span>Real-time</span>
-              <small>Instant messaging</small>
-            </div>
-            <div className="hero-stat">
-              <span>Live</span>
-              <small>User notifications</small>
-            </div>
+
+          <div className="dashboard-image">
+            <img src={dashboardImage} alt="Dashboard" draggable={false} />
           </div>
         </section>
 
-        <section className="card-grid">
-          <article className="overview-card">
-            <h3>🚀 Get Started</h3>
-            <p>
-              Navigate to the chat rooms section to start a conversation or create your own room.
-            </p>
-            <button
-              className="button-link"
-              onClick={() => navigate('/rooms')}
-            >
-              Browse Rooms →
-            </button>
-          </article>
-
-          <article className="overview-card">
-            <h3>💬 Create Room</h3>
-            <p>
-              Want your own space? Create a chat room and invite others to join.
-              You'll be the room owner and can manage members.
-            </p>
-            <button
-              className="button-link"
-              onClick={() => navigate('/create-room')}
-            >
-              Create Room →
-            </button>
-          </article>
-
-          <article className="overview-card">
-            <h3>👥 Your Account</h3>
-            <p>
-              <strong>Username:</strong> {user?.username || 'Loading...'}<br />
-              <strong>Email:</strong> {user?.email || 'Loading...'}
-            </p>
-          </article>
+        <section className="user-info-section">
+          <div className="user-card">
+            <h2>Your Profile</h2>
+            <div className="user-details">
+              <div className="detail-item">
+                <span className="label">Username</span>
+                <span className="value">{user?.username || 'Loading...'}</span>
+              </div>
+              <div className="detail-item">
+                <span className="label">Email</span>
+                <span className="value">{user?.email || 'Loading...'}</span>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
     </div>

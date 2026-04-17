@@ -45,9 +45,14 @@ const getAllRooms = async (req, res) => {
 
     let query = {};
 
-    // Search functionality
-    if (search) {
-      query.$text = { $search: search };
+    // Search functionality - search in name and description
+    if (search && search.trim()) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ]
+      };
     }
 
     const rooms = await Room.find(query)

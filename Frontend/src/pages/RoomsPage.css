@@ -93,7 +93,7 @@
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 22px;
-  box-shadow: 0 4px 12px var(--shadow);
+  /* box-shadow: 0 4px 12px var(--shadow); */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -102,8 +102,7 @@
 }
 
 .room-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px var(--shadow);
+  transform: translateY(-1px);
 }
 
 .room-card-header {

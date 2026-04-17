@@ -71,7 +71,7 @@ export default function RoomsListPage() {
         <div className="rooms-header-left">
 
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
             className="home-button"
             title="Go to Home"
           >
