@@ -6,16 +6,16 @@ const User = require('../models/User.model');
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, username: user.username, email: user.email },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || 'your-secret-key',
     {
-      expiresIn: process.env.JWT_EXPIRATION || '15m',
+      expiresIn: process.env.JWT_EXPIRATION || '24h',
     }
   );
 };
 
 // Generate Refresh Token (long-lived, in cookies)
 const generateRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
+  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET || 'your-refresh-secret', {
     expiresIn: process.env.JWT_REFRESH_EXPIRATION || '7d',
   });
 };
@@ -234,7 +234,7 @@ exports.refreshToken = async (req, res) => {
     try {
       const decoded = jwt.verify(
         refreshToken,
-        process.env.JWT_REFRESH_SECRET
+        process.env.JWT_REFRESH_SECRET || 'your-refresh-secret'
       );
 
       // Fetch user data and verify refresh token matches DB
@@ -260,6 +260,12 @@ exports.refreshToken = async (req, res) => {
       res.status(200).json({
         success: true,
         accessToken,
+        user: {
+          id: user._id,
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+        },
       });
     } catch (error) {
       res.clearCookie('refreshToken');
@@ -293,7 +299,7 @@ exports.verifySession = async (req, res) => {
     try {
       const decoded = jwt.verify(
         refreshToken,
-        process.env.JWT_REFRESH_SECRET
+        process.env.JWT_REFRESH_SECRET || 'your-refresh-secret'
       );
 
       // Fetch user data and verify refresh token matches DB
@@ -323,12 +329,13 @@ exports.verifySession = async (req, res) => {
         accessToken,
         user: {
           id: user._id,
-          _id: user._id,  // --> new line
+          _id: user._id,
           username: user.username,
           email: user.email,
         },
       });
     } catch (error) {
+      console.error('Session verification error:', error.message);
       res.clearCookie('refreshToken');
       return res.status(401).json({
         success: false,

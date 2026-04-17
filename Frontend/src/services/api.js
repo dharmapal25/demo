@@ -32,7 +32,8 @@ API.interceptors.response.use(
       !originalRequest._retry &&
       originalRequest.url !== '/auth/login' &&
       originalRequest.url !== '/auth/register' &&
-      originalRequest.url !== '/auth/verify-session'
+      originalRequest.url !== '/auth/verify-session' &&
+      originalRequest.url !== '/auth/refresh'
     ) {
       originalRequest._retry = true;
 
@@ -41,16 +42,19 @@ API.interceptors.response.use(
         const { data } = await axios.post(
           `${import.meta.env.VITE_API_URL || 'https://chatroom-hub-server.onrender.com/api'}/auth/refresh`,
           {},
-          { withCredentials: true }
+          { withCredentials: true, timeout: 10000 }
         );
 
         // Update access token (memory only)
-        accessToken = data.accessToken;
-
-        // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        return API(originalRequest);
+        if (data.accessToken) {
+          accessToken = data.accessToken;
+          
+          // Retry original request with new token
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          return API(originalRequest);
+        }
       } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError.message);
         // Refresh failed, redirect to login
         accessToken = null;
         window.location.href = '/login';
