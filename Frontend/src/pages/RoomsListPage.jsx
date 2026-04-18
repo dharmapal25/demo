@@ -175,7 +175,7 @@ export default function RoomsListPage() {
                   }
                 }) ? (
                   <button
-                    className="button-secondary"
+                    className="button-secondary open-chat"
                     onClick={() => navigate(`/chat/${room._id}`)}
                   >
                     Open Chat
@@ -211,7 +211,7 @@ export default function RoomsListPage() {
               <button
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
-                className="button-secondary"
+                className="button-secondary prev-page"
               >
                 ← Previous
               </button>

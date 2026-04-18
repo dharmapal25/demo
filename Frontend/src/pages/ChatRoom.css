@@ -186,7 +186,7 @@
 }
 
 .own-message .message-content {
-  background: linear-gradient(112deg, var(--accent) 0%, #334155 100%);
+  background: linear-gradient(112deg, #11161d49 0%, #14030363 100%);
   color: white;
   border-radius: 12px 12px 0 12px;
 }
@@ -215,10 +215,11 @@
 
 .message-header strong {
   font-weight: 600;
+  opacity: 0.6;
 }
 
 .message-header small {
-  opacity: 0.7;
+  opacity: 0.4;
   font-size: 0.78rem;
 }
 
@@ -226,7 +227,7 @@
   margin: 0;
   word-wrap: break-word;
   line-height: 1.5;
-  font-size: 0.95rem;
+  font-size: 1.3rem;
 }
 
 .empty-messages {
